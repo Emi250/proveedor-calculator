@@ -33,7 +33,9 @@ DATA_FILE = "video_data.pkl"
 def cargar_datos():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "rb") as f:
-            return pickle.load(f)
+            df = pickle.load(f)
+            df["Fecha"] = pd.to_datetime(df["Fecha"], errors="coerce")  # 👈 conversión segura
+            return df
     else:
         return pd.DataFrame(columns=["Fecha", "Tipo de video", "Duración (min)", "Precio"])
 
