@@ -37,7 +37,9 @@ def cargar_datos():
             df["Fecha"] = pd.to_datetime(df["Fecha"], errors="coerce")
             return df
     else:
-        return pd.DataFrame(columns=["Fecha", "Tipo de video", "Duración (min)", "Precio"])
+df_vacio = pd.DataFrame(columns=["Fecha", "Tipo de video", "Duración (min)", "Precio"])
+df_vacio["Fecha"] = pd.to_datetime(df_vacio["Fecha"])
+return df_vacio
 
 def guardar_datos(df):
     with open(DATA_FILE, "wb") as f:
