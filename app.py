@@ -66,6 +66,9 @@ def calcular_precio(tipo, duracion):
 st.set_page_config(page_title="Seguimiento de Edición de Videos", layout="wide")
 st.title("🎬 Seguimiento de Edición de Videos")
 
+# Advertencia sobre almacenamiento temporal
+st.warning("⚠️ Esta versión de la app no guarda datos permanentemente. Al cerrar o actualizar, los datos se perderán.")
+
 # Cargar datos
 df = cargar_datos()
 
@@ -106,18 +109,21 @@ with st.form("video_form"):
         st.success(f"✅ Video agregado correctamente. Pago: ${precio:,.0f} ARS")
 
 # Agrupar por mes
-df["Mes"] = df["Fecha"].dt.strftime("%Y-%m")
-meses = sorted(df["Mes"].unique(), reverse=True)
+if not df.empty:
+    df["Mes"] = df["Fecha"].dt.strftime("%Y-%m")
+    meses = sorted(df["Mes"].unique(), reverse=True)
 
-# Pestañas por mes
-tabs = st.tabs(meses)
+    # Pestañas por mes
+    tabs = st.tabs(meses)
 
-for i, mes in enumerate(meses):
-    with tabs[i]:
-        st.subheader(f"📅 Videos del mes: {mes}")
-        df_mes = df[df["Mes"] == mes].copy()
-        df_mes = df_mes.sort_values("Fecha")
-        df_mes["Fecha"] = df_mes["Fecha"].dt.date  # mostrar solo la fecha
+    for i, mes in enumerate(meses):
+        with tabs[i]:
+            st.subheader(f"📅 Videos del mes: {mes}")
+            df_mes = df[df["Mes"] == mes].copy()
+            df_mes = df_mes.sort_values("Fecha")
+            df_mes["Fecha"] = df_mes["Fecha"].dt.date  # mostrar solo la fecha
 
-        st.dataframe(df_mes[["Fecha", "Tipo de video", "Duración (min)", "Precio"]], use_container_width=True)
-        st.markdown(f"### 💰 Total mensual: ${df_mes['Precio'].sum():,.0f} ARS")
+            st.dataframe(df_mes[["Fecha", "Tipo de video", "Duración (min)", "Precio"]], use_container_width=True)
+            st.markdown(f"### 💰 Total mensual: ${df_mes['Precio'].sum():,.0f} ARS")
+else:
+    st.info("No hay videos cargados aún.")
